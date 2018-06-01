@@ -73,7 +73,6 @@ class TSVDocPreprocessor(DocPreprocessor):
             for line in tsv:
                 try:
                     (doc_name, doc_text) = line.split('\t', 1)
-                    int(doc_name) # Confirm doc_name is numeric only
                 except ValueError:
                     print("Malformed line. Skipping...")
                     continue
