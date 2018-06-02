@@ -234,7 +234,7 @@ class SnorkelPipeline(object):
                 #     self.session, L_dev, L_gold_dev, display=True)
 
         elif self.config['supervision'] == 'metal':
-            from metal.class_hierarchy import ClassHierarchy
+            from snorkel.contrib.pipelines.metal import ClassHierarchy
 
             L_train = convert_to_categorical(L_train)
             
