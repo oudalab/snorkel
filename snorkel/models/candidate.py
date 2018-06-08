@@ -29,39 +29,12 @@ class Candidate(SnorkelBase):
 
     __mapper_args__ = {
         'polymorphic_identity': 'candidate',
-        'polymorphic_on': type
     }
 
     # __table_args__ = {"extend_existing" : True}
 
-    def get_contexts(self):
-        """Get a tuple of the consituent contexts making up this candidate"""
-        return tuple(getattr(self, name) for name in self.__argnames__)
-
-    def get_parent(self):
-        # Fails if both contexts don't have same parent
-        p = [c.get_parent() for c in self.get_contexts()]
-        if p.count(p[0]) == len(p):
-            return p[0]
-        else:
-            raise Exception("Contexts do not all have same parent")
-
-    def get_cids(self):
-        """Get a tuple of the canonical IDs (CIDs) of the contexts making up 
-        this candidate"""
-        return tuple(getattr(self, name + "_cid") for name in self.__argnames__)
-
     def __len__(self):
         return len(self.__argnames__)
-
-    def __getitem__(self, key):
-        return self.get_contexts()[key]
-
-    def __repr__(self):
-        return "%s(%s)" % (
-            self.__class__.__name__,
-            ", ".join(map(str, self.get_contexts()))
-        )
 
 # This global dictionary contains all classes that have been declared in this Python environment, so
 # that candidate_subclass() can return a class if it already exists and is identical in specification
@@ -148,31 +121,10 @@ def candidate_subclass(class_name, args, table_name=None, cardinality=None,
         # Create named arguments, i.e. the entity mentions comprising the relation
         # mention
         # For each entity mention: id, cid ("canonical id"), and pointer to Context
-        unique_args = []
         for arg in args:
 
             # Primary arguments are constituent Contexts, and their ids
-            class_attribs[arg + '_id'] = Column(
-                Integer, ForeignKey('context.id', ondelete='CASCADE'))
-            class_attribs[arg] = relationship(
-                'Context',
-                backref=backref(
-                    table_name + '_' + arg + 's',
-                    cascade_backrefs=False,
-                    cascade='all, delete-orphan'
-                ),
-                cascade_backrefs=False,
-                foreign_keys=class_attribs[arg + '_id']
-            )
-            unique_args.append(class_attribs[arg + '_id'])
-
-            # Canonical ids, to be set post-entity normalization stage
-            class_attribs[arg + '_cid'] = Column(String)
-
-        # Add unique constraints to the arguments
-        class_attribs['__table_args__'] = (
-            UniqueConstraint(*unique_args),
-        )
+            class_attribs[arg] = Column(String)
 
         # Create class
         C = type(class_name, (Candidate,), class_attribs)
