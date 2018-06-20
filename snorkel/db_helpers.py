@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from builtins import *
 from future.utils import iteritems
 
-from .models import StableLabel, GoldLabel, Context, GoldLabelKey
+from .models import StableLabel, GoldLabel, GoldLabelKey
 from sqlalchemy.orm import object_session
 
 def reload_annotator_labels(session, candidate_class, annotator_name, split, filter_label_split=True, create_missing_cands=False):
@@ -22,25 +22,10 @@ def reload_annotator_labels(session, candidate_class, annotator_name, split, fil
     sl_query = session.query(StableLabel).filter(StableLabel.annotator_name == annotator_name)
     sl_query = sl_query.filter(StableLabel.split == split) if filter_label_split else sl_query
     for sl in sl_query.all():
-        context_stable_ids = sl.context_stable_ids.split('~~')
-
-        # Check for labeled Contexts
-        # TODO: Does not create the Contexts if they do not yet exist!
-        contexts = []
-        for stable_id in context_stable_ids:
-            context = session.query(Context).filter(Context.stable_id == stable_id).first()
-            if context:
-                contexts.append(context)
-        if len(contexts) < len(context_stable_ids):
-            missed.append(sl)
-            continue
-
-        # Check for Candidate
-        # Assemble candidate arguments
-        candidate_args  = {'split' : split}
+        candidate_args = {'split' : split}
         for i, arg_name in enumerate(candidate_class.__argnames__):
-            candidate_args[arg_name] = contexts[i]
-
+            candidate_args[arg_name] = sl.tweet
+        
         # Assemble query and check
         candidate_query = session.query(candidate_class)
         for k, v in iteritems(candidate_args):
