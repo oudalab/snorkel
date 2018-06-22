@@ -1,22 +1,21 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import TfidfVectorizer
-from .models import StableLabel
+import pandas as pd
 
 X_train = []
 Y_train = []
 
 vectorizer = TfidfVectorizer(min_df = 2, max_df = 0.8)
 
-def load_data(session, annotator_name='gold'):
-    res_set = session.query(StableLabel).filter(StableLabel.annotator_name == annotator_name)
-    for res in res_set:
-        X_train.append(res.tweet)
-        Y_train.append(res.value)
+def load_data():
+    FPATH = 'data/annotated_tweets.tsv'
+    annotated_tweets = pd.read_csv(FPATH, sep='\t')
+    for index, row in annotated_tweets.iterrows():
+        X_train.append(row['content'])
+        Y_train.append(row['label'])
 
-def train_classifier(session, annotator_name):
-    '''Trains classifier and saves it using pickle.'''
-
-    load_data(session, annotator_name)
+def train_classifier():
+    load_data()
 
     X_train_vecs = vectorizer.fit_transform(X_train)
     clf = LogisticRegression()
