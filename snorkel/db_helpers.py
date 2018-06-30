@@ -23,7 +23,7 @@ def reload_annotator_labels(session, candidate_class, annotator_name, split, fil
     sl_query = sl_query.filter(StableLabel.split == split) if filter_label_split else sl_query
     for sl in sl_query.all():
         candidate_args = {'split' : split}
-        for i, arg_name in enumerate(candidate_class.__argnames__):
+        for i, arg_name in enumerate(candidate_class.__argnames__):            
             candidate_args[arg_name] = sl.tweet
         
         # Assemble query and check

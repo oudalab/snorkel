@@ -15,9 +15,9 @@ class Classifier(object):
     # Set this class variable to True if train, marginals, predict, and score,
     # take a list of @Candidates as the first argument X;
     # otherwise assume X is an AnnotationMatrix
-    representation = False
-
-    def __init__(self, cardinality=2, name=None):
+    representation = True
+    
+    def __init__(self, cardinality=3, name=None):
         self.name = name or self.__class__.__name__
         self.cardinality = cardinality
 
@@ -130,3 +130,4 @@ class Classifier(object):
 
     def load(self):
         raise NotImplementedError()
+
