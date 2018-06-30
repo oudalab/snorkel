@@ -487,7 +487,7 @@ def save_marginals(session, X, marginals, training=True):
         shape = marginals.shape
 
     # Handle binary input as M x 1-dim array; assume elements represent
-    # poksitive (k=1) class values
+    # positive (k=1) class values
     if len(shape) == 1:
         marginals = np.vstack([1-marginals, marginals]).T
 
@@ -565,6 +565,9 @@ def load_marginals(session, X=None, split=0, cids_query=None, training=True):
     else:
         cardinality = session.query(Candidate) \
             .get(marginal_tuples[0][0]).cardinality
+        
+        # FIXME: infer cardinality from code
+        cardinality = 3
         marginals = np.zeros((cids_query.count(), cardinality))
         cid_map = dict([(cid, i) for i, (cid,) in enumerate(cids_query.all())])
 
@@ -579,4 +582,6 @@ def load_marginals(session, X=None, split=0, cids_query=None, training=True):
             marginals[i, 0] = 1 - row_sums[i]
     else:
         marginals = np.ravel(marginals[:, 1])
+
+    print(marginals)
     return marginals
