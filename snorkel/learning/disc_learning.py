@@ -63,7 +63,8 @@ class TFNoiseAwareModel(Classifier):
         """
         # Define loss and marginals ops
         if self.cardinality > 2:
-            loss_fn = tf.nn.softmax_cross_entropy_with_logits
+            #loss_fn = tf.nn.softmax_cross_entropy_with_logits
+            loss_fn = tf.nn.softmax_cross_entropy_with_logits_v2
         else:
             loss_fn = tf.nn.sigmoid_cross_entropy_with_logits
 
