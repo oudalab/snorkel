@@ -47,16 +47,11 @@ class reRNN(RNNBase):
         """
         if not hasattr(self, 'word_dict'):
             self.word_dict = SymbolTable()
-        data, ends = [], []
+        #data, ends = [], []
+        data = []
         for candidate in candidates:
-            # Mark sentence
-            args = [
-                (candidate[0].get_word_start(), candidate[0].get_word_end(), 1),
-                (candidate[1].get_word_start(), candidate[1].get_word_end(), 2)
-            ]
-            s = mark_sentence(candidate_to_tokens(candidate), args)
+            s = candidate_to_tokens(candidate)
             # Either extend word table or retrieve from it
             f = self.word_dict.get if extend else self.word_dict.lookup
             data.append(np.array(list(map(f, s))))
-            ends.append(max(candidate[i].get_word_end() for i in [0, 1]))
-        return data, ends
+        return data

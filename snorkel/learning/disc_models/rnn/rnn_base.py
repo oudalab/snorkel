@@ -164,13 +164,13 @@ class RNNBase(TFNoiseAwareModel):
         train.
         """
         # Text preprocessing
-        X_train, ends = self._preprocess_data(X_train, extend=True)
+        X_train = self._preprocess_data(X_train, extend=True)
         if X_dev is not None:
-            X_dev, _ = self._preprocess_data(X_dev, extend=False)
+            X_dev  = self._preprocess_data(X_dev, extend=False)
         
         # Get max sentence size
         max_len = max_sentence_length or max(len(x) for x in X_train)
-        self._check_max_sentence_length(ends, max_len=max_len)
+        #self._check_max_sentence_length(ends, max_len=max_len)
         
         # Train model- note we pass word_dict through here so it gets saved...
         super(RNNBase, self).train(X_train, Y_train, X_dev=X_dev,
@@ -182,8 +182,7 @@ class RNNBase(TFNoiseAwareModel):
         """
         # Preprocess if not already preprocessed
         if isinstance(test_candidates[0], Candidate):
-            X_test, ends = self._preprocess_data(test_candidates, extend=False)
-            self._check_max_sentence_length(ends)
+            X_test = self._preprocess_data(test_candidates, extend=False)
         else:
             X_test = test_candidates
 
