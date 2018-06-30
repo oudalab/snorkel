@@ -39,10 +39,9 @@ def scrub(s):
     return ''.join(c for c in s if ord(c) < 128)
 
 
-def candidate_to_tokens(candidate, token_type='words'):
-    tokens = candidate.get_parent().__dict__[token_type]
-    return [scrub(w).lower() for w in tokens]
-
+def candidate_to_tokens(candidate, token_type='content'):
+    tokens = candidate.__dict__[token_type].lower().split()
+    return tokens
 
 def get_rnn_output(output, dim, lengths):
     batch_size = tf.shape(output)[0]
