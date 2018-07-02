@@ -35,7 +35,7 @@ docs/_build
 tutorials/cdr/data/CDR*.BioC.xml
 tutorials/cdr/data/dicts
 
-tutorials/intro/label/label_tweets.ipynb
+tutorials/intro/label_tweets.ipynb
 tutorials/intro/preprocess_ex_tweets.ipynb
 
 tutorials/intro/data/articles-dev.tsv
